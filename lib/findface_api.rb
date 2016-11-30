@@ -25,9 +25,9 @@ module FindfaceApi
           c.authorization :Token, access_token
           c.request :multipart
           c.request :json # either :json or :url_encoded
-          c.response :json, content_type: /\bjson$/
-          c.response :logger, logger, bodies: true unless logger.nil?
           c.response :raise_error
+          c.response :logger, logger, headers: false, bodies: true unless logger.nil?
+          c.response :json, content_type: /\bjson$/
           c.proxy proxy unless proxy.nil?
           c.adapter adapter.nil? ? Faraday.default_adapter : adapter
         end
