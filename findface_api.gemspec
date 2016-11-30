@@ -34,6 +34,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 11.3"
   spec.add_development_dependency "rspec", "~> 3.5.0"
 
-  spec.add_runtime_dependency 'faraday', '~> 0.10.0'
-  spec.add_runtime_dependency 'faraday_middleware', '~> 0.10.1'
+  spec.add_runtime_dependency 'faraday', '~> 0.8'
+  spec.add_runtime_dependency 'faraday_middleware', '~> 0.8'
 end
