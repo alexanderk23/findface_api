@@ -9,7 +9,8 @@ module FindfaceApi
 
   # Exceptions
   module Error
-    class ClientError < RuntimeError; end
+    class Error < StandardError; end
+    class ClientError < Error; end
   end
 
   # Configuration
@@ -95,7 +96,8 @@ module FindfaceApi
     def post(uri, data)
       response = connection.post uri, data
       if !response.success? || response.body.include?('code')
-        raise FindfaceApi::Error::ClientError, response.body
+        message = response.body.fetch('reason', 'API Error')
+        raise FindfaceApi::Error::ClientError, message
       end
       response.body
     end
