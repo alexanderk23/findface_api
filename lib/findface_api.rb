@@ -35,7 +35,7 @@ module FindfaceApi
   # Connection
   module Connection
     def connection
-      raise 'No access token specified' if access_token.nil?
+      raise FindfaceApi::Error::ClientError, 'No access token specified' if access_token.nil?
       @connection ||= begin
         conn = Faraday.new ENDPOINT_URI do |c|
           c.authorization :Token, access_token
