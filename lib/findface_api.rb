@@ -107,11 +107,6 @@ module FindfaceApi
 
     def post(uri, data)
       response = connection.post uri, data
-      # body = response.body
-      # if body.is_a?(Hash) && body.include?('reason')
-      #   raise FindfaceApi::Error::ClientError, body.reason
-      # end
-      # raise Faraday::Error::ClientError, response.to_hash unless response.success?
       response.body
     end
   end
