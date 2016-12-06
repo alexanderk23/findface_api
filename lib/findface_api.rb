@@ -1,6 +1,5 @@
 require 'faraday'
 require 'faraday_middleware'
-require 'ostruct'
 require 'findface_api/version'
 
 # Findface API
@@ -22,6 +21,17 @@ module FindfaceApi
     end
   end
 
+  # Faraday middleware
+  module Middleware
+    # Raise API Exception
+    class RaiseApiError < ::Faraday::Response::Middleware
+      def on_complete(env)
+        return unless env[:body].is_a?(Hash) && env[:body].include?('reason')
+        raise FindfaceApi::Error::ClientError, env[:body]['reason']
+      end
+    end
+  end
+
   # Connection
   module Connection
     def connection
@@ -31,6 +41,8 @@ module FindfaceApi
           c.authorization :Token, access_token
           c.request :multipart
           c.request :json # either :json or :url_encoded
+          c.response :raise_error
+          c.use FindfaceApi::Middleware::RaiseApiError
           c.response :logger, logger, headers: false, bodies: true unless logger.nil?
           c.response :json, content_type: /\bjson$/
           c.proxy proxy unless proxy.nil?
@@ -95,10 +107,11 @@ module FindfaceApi
 
     def post(uri, data)
       response = connection.post uri, data
-      if !response.success? || response.body.include?('code')
-        message = response.body.fetch('reason', 'API Error')
-        raise FindfaceApi::Error::ClientError, message
-      end
+      # body = response.body
+      # if body.is_a?(Hash) && body.include?('reason')
+      #   raise FindfaceApi::Error::ClientError, body.reason
+      # end
+      # raise Faraday::Error::ClientError, response.to_hash unless response.success?
       response.body
     end
   end
